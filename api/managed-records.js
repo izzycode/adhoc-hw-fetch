@@ -54,7 +54,7 @@ function retrieve(opts = {}) {
       return [];
     }
   )
-  .then( // transform and return the page of records
+  .then( // transform and return records for page
     records => {
       const recsForPage = records.slice(0, PER_PAGE);
       return {
