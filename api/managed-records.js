@@ -16,7 +16,7 @@ const PER_PAGE = 10;
  * page of transformed records, wrapped in a Promise.
  *
  * @param {Object}  opts         Optional. An object of options for records.
- * @param {Array}   opts.colors  Optional. Filter records by one or more colors:
+ * @param {Array}   opts.colors  Optional, defaults to all. Filter records by colors:
  *                               "red", "brown", "blue", "yellow", or "green"
  * @param {Integer} opts.page    Optional, defaults to 1. The page to return.
  */
