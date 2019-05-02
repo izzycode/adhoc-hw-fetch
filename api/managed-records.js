@@ -11,7 +11,6 @@ const CLOSED_DISPOSITION = "closed";
 const HTTP_OK = 200;
 const PER_PAGE = 10;
 
-let currentPage;
 /**
  * Retrieves raw data from the /records/ API endpoint and returns a
  * page of transformed records, wrapped in a Promise.
@@ -26,30 +25,28 @@ function retrieve(opts = {}) {
 
   // helpers, mostly for legibility
   const getIds = (records) => {
-    return records.map(rec => rec.id);
+    return records.map(record => record.id);
   }
-  const prevPageNum = (records) => {
-    return (currentPage > 1) ? currentPage - 1 : null;
+  const prevPageNum = () => {
+    return (page > 1) ? page - 1 : null;
   }
   const nextPageNum = (records) => {
-    return ((records.length - PER_PAGE) > 0) ? currentPage + 1 : null;
+    return ((records.length - PER_PAGE) > 0) ? page + 1 : null;
   }
   const isClosed = record => record.disposition == CLOSED_DISPOSITION;
   const isOpen = record => record.disposition == OPEN_DISPOSITION;
   const isPrimary = record => PRIMARY_COLORS.includes(record.color);
 
-  currentPage = page;
-
-  return fetch(
+  return fetch( // make the request
     URI(window.path).search({
         "offset": (page - 1) * PER_PAGE,
         "color[]": colors
     })
   )
-  .then(
+  .then( // handle the HTTP response
     response => {
       if (response.status == HTTP_OK)
-        return response.json()
+        return response.json();
       return Promise.reject(response);
     },
     error => {
@@ -57,11 +54,11 @@ function retrieve(opts = {}) {
       return [];
     }
   )
-  .then(
+  .then( // transform and return the page of records
     records => {
       const recsForPage = records.slice(0, PER_PAGE);
       return {
-        "previousPage": prevPageNum(records),
+        "previousPage": prevPageNum(),
         "nextPage": nextPageNum(records),
         "ids": getIds(recsForPage),
         "open": recsForPage.filter(isOpen).map(rec => ({ ...rec,
